@@ -184,9 +184,9 @@ def evento(desporto):
 
     return jsonify({'eventos' : eventoARR })
 
-@app.route("/user/<string:userneme>", methods=['GET', 'POST'])
-@login_required 
-def myapostas:
+# @app.route("/user/<string:userneme>", methods=['GET', 'POST'])
+# @login_required 
+# def myapostas:
     
 
 
