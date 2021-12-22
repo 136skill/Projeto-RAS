@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block content%}
+<div class="content-section">
+    <form method="POST" action="">
+        {{form.hidden_tag()}}
+        {{form.desporto}}
+        {{form.moeda}}
+        {{form.valor}}
+        {{form.evento}}
+        <input type="submit">
+    </form>
+    <script>
+        let desporto_select = document.getElementById('desporto');
+        let evento_select = document.getElementById('evento');
+
+        desporto_select.onchange = function () {
+            desporto = desporto_select.value;
+            
+            fetch('/aposta/' + desporto).then(function(response) {
+
+                response.json().then(function(data){
+                    let optionHTML = '';
+                    
+                   for(let evento of data.eventos) {
+                        optionHTML += '<option value="' + evento.id + '">' + 'Jogo \n' + evento.liga + '\n Equipa: \n' + evento.equipa + '\n Odd: \n' + evento.odd + '</option>';
+                   }
+
+                   evento_select.innerHTML = optionHTML;
+                });
+            });
+        }
+    </script>
+
+{% endblock %}

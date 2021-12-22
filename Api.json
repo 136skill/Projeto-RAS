@@ -1,0 +1,27 @@
+{ 
+    "Eventos":[
+                {
+                  "id" : "0",
+                  "Desporto" : "Tenis",
+                  "Liga": "US Open",
+                  "Equipa1": "Naomi Osaka" ,
+                  "Equipa2": "Serena Williams",
+                  "Odd1": "3,70",
+                  "Odd2": "1,19",
+                  "Data": "19-12-2021",
+                  "Hora" : "14:00:00"
+                },
+                {
+                    "id" : "0",
+                    "Desporto" : "Futebol",
+                    "Liga" : "Primeira Liga Portuguesa",
+                    "Equipa1": "SL Benfica" ,
+                    "Equipa2": "Gil Vicente",
+                    "Odd1": "1,13",
+                    "Odd2": "18,00",
+                    "Empate" : "8,25",
+                    "Data": "19-12-2021",
+                    "Hora" : "17:00:00"   
+                  }
+                ]
+}
