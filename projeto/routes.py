@@ -1,7 +1,8 @@
 import os
 import secrets
+from datetime import datetime
 from PIL import Image #dá resize nos icons para nao ocupar muito espaço
-from flask import render_template, url_for, flash, redirect, request, jsonify
+from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from projeto import app, db, bcrypt
 from projeto.forms import Registo, Login, UpdateConta, nova_Aposta
 from projeto.models import User, Aposta, Evento
@@ -100,6 +101,7 @@ def conta():
     DC = req.get('DepositoCardan')
     DL = req.get('DepositoLibra')
 
+    atualizaApostas()
     if form.validate_on_submit():
         if form.foto.data:
             picture_file = guarda_foto(form.foto.data)
@@ -146,6 +148,7 @@ def conta():
 @app.route("/aposta/nova", methods=['GET', 'POST'])
 @login_required
 def novaAposta():
+    atualizaApostas()
     form = nova_Aposta()
     req = request.form
     valor = req.get('valor')
@@ -161,7 +164,7 @@ def novaAposta():
         useratS = User.query.filter_by(id=current_user.id).first()
         if form.moeda.data == '€':
             current_user.saldoEuro = (useratS.saldoEuro - int(form.valor.data))
-        nova = Aposta(desporto=form.desporto.data, dia=evento.dia, mes=evento.mes,ano=evento.ano,hora=evento.hora,evento=evento.liga, estado="Aberto",equipa=evento.equipa,valor=form.valor.data,moeda=form.moeda.data,odd=evento.odd,user_id=current_user.id)
+        nova = Aposta(desporto=form.desporto.data, dia=evento.dia, mes=evento.mes,ano=evento.ano,hora=evento.hora,minuto=evento.minuto,evento=evento.liga, estado="Aberto",equipa=evento.equipa,valor=form.valor.data,moeda=form.moeda.data,odd=evento.odd,potencial=evento.potencial,user_id=current_user.id)
         db.session.add(nova)
         db.session.commit()
         flash('Aposta efetuada com sucesso!','success')
@@ -184,9 +187,57 @@ def evento(desporto):
 
     return jsonify({'eventos' : eventoARR })
 
-# @app.route("/user/<string:userneme>", methods=['GET', 'POST'])
-# @login_required 
-# def myapostas:
+
+
+def atualizaApostas():
+    currentDay = datetime.now().day
+    currentMonth = datetime.now().month
+    currentYear = datetime.now().year
+    currentHour = datetime.now().hour
+    currentMinute = datetime.now().minute
+
+    aposta = Aposta.query.filter_by(user_id=current_user.id).all()
+    for p in aposta:
+        if p.estado == 'Aberto':
+            if p.ano <= currentYear:
+                if p.mes <= currentMonth:
+                    if p.dia < currentDay:
+                        flash('Houve atualização de apostas','success')
+                        p.estado = 'Fechado'
+                    if p.dia == currentDay:
+                        if p.hora < currentHour:
+                            flash('Houve atualização de apostas, Jogo de {{p.equipa}} terminou!','success')
+                            p.estado = 'Fechado'
+                        if p.hora == currentHour:
+                            if currentMinute >= p.minuto:
+                                flash('Houve atualização de apostas','success')
+                                p.estado = 'Fechado'
+                    if(p.potencial=='G'):
+                        if (p.moeda == '€'):
+                            usernow = User.query.filter_by(username=current_user.username).first()
+                            current_user.saldoEuro += (p.valor * p.odd)
+                    else:
+                        if(p.moeda == '€'):
+                            usernow = User.query.filter_by(username=current_user.username).first()
+                            current_user.saldoEuro -= (p.valor * p.odd)
+
+
+        db.session.commit()
+
+
+@app.route("/mybets", methods=['GET', 'POST'])
+@login_required 
+def myapostas():
+    atualizaApostas()
+    page = request.args.get('page',1,type=int)
+    user = User.query.filter_by(username=current_user.username).first_or_404()
+    apostas = Aposta.query.filter_by(user_id=user.id)\
+               .order_by(Aposta.mes.desc())\
+               .paginate(page=page, per_page=10)
+
+    
+    return render_template('apostas.html', apostas=apostas,user=user)
+
     
 
 

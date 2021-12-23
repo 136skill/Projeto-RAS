@@ -29,17 +29,19 @@ class Aposta(db.Model):
     mes = db.Column(db.Integer, nullable=False)
     ano = db.Column(db.Integer, nullable=False)
     hora = db.Column(db.Integer, nullable=False)
+    minuto = db.Column(db.Integer, nullable=False)
     evento = db.Column(db.String(20), nullable=False)
     estado = db.Column(db.String(20), nullable=False)
     equipa = db.Column(db.String(20), nullable=False)
     valor = db.Column(db.Integer, nullable=False)
     moeda = db.Column(db.String(20),nullable=False)
     odd = db.Column(db.Integer, nullable=False)
+    potencial = db.Column(db.String(5),nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
     
     def __repr__(self):
-        return f"Aposta('{self.desporto}', '{self.id}')"
+        return f"Aposta('{self.desporto}', '{self.id}', '{self.user_id}')"
 
 class Evento(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,6 +53,8 @@ class Evento(db.Model):
     mes = db.Column(db.Integer, nullable=False)
     ano = db.Column(db.Integer, nullable=False)
     hora = db.Column(db.Integer, nullable=False)
+    minuto = db.Column(db.Integer,nullable=False)
+    potencial = db.Column(db.String(5),nullable=False)
 
     def __repr__(self):
         return f"Evento('{self.desporto}', '{self.equipa}', '{self.odd}', '{self.liga}')"

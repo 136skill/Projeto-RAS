@@ -1,10 +1,5 @@
 {% extends "layout.html" %}
-{% block content %}
-    <h1>Apostas Disponíveis!</h1>
-    <p>Faça Login/Registo para apostar! </p>
-    {% for eventos in data['Eventos'] %}
-        <h1>{{eventos.Desporto}}</h1>
-        <p>Evento: {{eventos.Liga}} disponível até: {{eventos.Data}} </p>
-        <p> Jogo entre {{eventos.Equipa1}} (odd:{{eventos.Odd1}}) e {{eventos.Equipa2}} (odd:{{eventos.Odd2}})</p>
-    {%endfor%}
+{% block content%}
+    <h1>RASBet</h1>
+    <img src="../static/fotosDePerfil/4d9682d98483647f.jpg" alt="alternatetext">
 {% endblock %}
