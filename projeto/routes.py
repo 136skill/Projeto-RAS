@@ -123,6 +123,16 @@ def conta():
             else:
                 current_user.email = form.email.data
 
+        if(DD != 0):
+            if 1 < int(DD) < 5:
+                flash('O depósito deve ser superior a 5$','danger')
+                return render_template('conta.html', title='A minha conta', form=form)
+            else:
+                userat = User.query.filter_by(username=username).first()
+                current_user.saldoDollar = (form.DepositoDollar.data + int(userat.saldoDollar))
+        if(DD == 0):
+            current_user.saldoDollar = current_user.saldoDollar
+
         if(DE != 0):
             if 1 < int(DE) < 5:
                 flash('O depósito deve ser superior a 5€','danger')
@@ -132,6 +142,26 @@ def conta():
                 current_user.saldoEuro = (form.DepositoEuro.data + int(userat.saldoEuro))
         if(DE == 0):
             current_user.saldoEuro = current_user.saldoEuro
+
+        if(DL != 0):
+            if 1 < int(DL) < 5:
+                flash('O depósito deve ser superior a 5£','danger')
+                return render_template('conta.html', title='A minha conta', form=form)
+            else:
+                userat = User.query.filter_by(username=username).first()
+                current_user.saldoLibra = (form.DepositoLibra.data + int(userat.saldoLibra))
+        if(DL == 0):
+            current_user.saldoLibra = current_user.saldoLibra
+
+        if(DC != 0):
+            if 1 < int(DC) < 5:
+                flash('O depósito deve ser superior a 5C','danger')
+                return render_template('conta.html', title='A minha conta', form=form)
+            else:
+                userat = User.query.filter_by(username=username).first()
+                current_user.saldoCardan = (form.DepositoCardan.data + int(userat.saldoCardan))
+        if(DC == 0):
+            current_user.saldoCardan = current_user.saldoCardan
         
         db.session.commit()
         flash('Conta atualizado com sucesso!','success')
@@ -141,6 +171,9 @@ def conta():
         form.username.data = current_user.username
         form.email.data = current_user.email
         form.DepositoEuro.data = 0
+        form.DepositoDollar.data = 0
+        form.DepositoLibra.data = 0
+        form.DepositoCardan.data = 0
     image_file = url_for('static', filename='fotosDePerfil/' + current_user.image_file)
     return render_template('conta.html', title='A minha Conta',form=form, image_file=image_file)
 
@@ -152,10 +185,28 @@ def novaAposta():
     form = nova_Aposta()
     req = request.form
     valor = req.get('valor')
+    moeda = req.get('moeda')
 
-    if current_user.saldoEuro < int(0 if valor is None else valor):
-        flash('Não tem saldo suficiente!','danger')
-        return render_template('novaAposta.html', title='Nova Aposta', form=form)
+    if form.moeda.data == '€':
+        if current_user.saldoEuro < int(0 if valor is None else valor):
+            flash('Não tem saldo suficiente!','danger')
+            return render_template('novaAposta.html', title='Nova Aposta', form=form)
+
+    if form.moeda.data == '$':
+        if current_user.saldoDollar < int(0 if valor is None else valor):
+            flash('Não tem saldo suficiente!','danger')
+            return render_template('novaAposta.html', title='Nova Aposta', form=form)
+
+    if form.moeda.data == '£':
+        if current_user.saldoLibra < int(0 if valor is None else valor):
+            flash('Não tem saldo suficiente!','danger')
+            return render_template('novaAposta.html', title='Nova Aposta', form=form)
+
+    if form.moeda.data == 'C':
+        if current_user.saldoCardan < int(0 if valor is None else valor):
+            flash('Não tem saldo suficiente!','danger')
+            return render_template('novaAposta.html', title='Nova Aposta', form=form)
+    
     
     form.evento.choices = [(evento.id, 'Jogo:' + str(evento.liga) + '\n Equipa:' + str(evento.equipa) + '\n Odd:' + str(evento.odd)) for evento in Evento.query.filter_by(desporto='Tenis').all()]
 
@@ -164,6 +215,12 @@ def novaAposta():
         useratS = User.query.filter_by(id=current_user.id).first()
         if form.moeda.data == '€':
             current_user.saldoEuro = (useratS.saldoEuro - int(form.valor.data))
+        if form.moeda.data == '£':
+            current_user.saldoLibra = (useratS.saldoLibra - int(form.valor.data))
+        if form.moeda.data == '$':
+            current_user.saldoDollar = (useratS.saldoDollar - int(form.valor.data))
+        if form.moeda.data == 'C':
+            current_user.saldoCardan = (useratS.saldoCardan - int(form.valor.data))
         nova = Aposta(desporto=form.desporto.data, dia=evento.dia, mes=evento.mes,ano=evento.ano,hora=evento.hora,minuto=evento.minuto,evento=evento.liga, estado="Aberto",equipa=evento.equipa,valor=form.valor.data,moeda=form.moeda.data,odd=evento.odd,potencial=evento.potencial,user_id=current_user.id)
         db.session.add(nova)
         db.session.commit()
@@ -206,7 +263,7 @@ def atualizaApostas():
                         p.estado = 'Fechado'
                     if p.dia == currentDay:
                         if p.hora < currentHour:
-                            flash('Houve atualização de apostas, Jogo de {{p.equipa}} terminou!','success')
+                            flash('Houve atualização de apostas, Jogo de {p.equipa} terminou!','success')
                             p.estado = 'Fechado'
                         if p.hora == currentHour:
                             if currentMinute >= p.minuto:
@@ -216,10 +273,28 @@ def atualizaApostas():
                         if (p.moeda == '€'):
                             usernow = User.query.filter_by(username=current_user.username).first()
                             current_user.saldoEuro += (p.valor * p.odd)
+                        if (p.moeda == '$'):
+                            usernow = User.query.filter_by(username=current_user.username).first()
+                            current_user.saldoDollar += (p.valor * p.odd)
+                        if (p.moeda == '£'):
+                            usernow = User.query.filter_by(username=current_user.username).first()
+                            current_user.saldoLibra += (p.valor * p.odd)
+                        if (p.moeda == 'C'):
+                            usernow = User.query.filter_by(username=current_user.username).first()
+                            current_user.saldoCardan += (p.valor * p.odd)
                     else:
                         if(p.moeda == '€'):
                             usernow = User.query.filter_by(username=current_user.username).first()
                             current_user.saldoEuro -= (p.valor * p.odd)
+                        if(p.moeda == '$'):
+                            usernow = User.query.filter_by(username=current_user.username).first()
+                            current_user.saldoDollar -= (p.valor * p.odd)
+                        if(p.moeda == '£'):
+                            usernow = User.query.filter_by(username=current_user.username).first()
+                            current_user.saldoLibra -= (p.valor * p.odd)
+                        if(p.moeda == 'C'):
+                            usernow = User.query.filter_by(username=current_user.username).first()
+                            current_user.saldoCardan -= (p.valor * p.odd)
 
 
         db.session.commit()

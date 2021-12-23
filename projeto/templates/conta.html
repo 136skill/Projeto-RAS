@@ -7,6 +7,9 @@
             <h2 class="account-heading">{{current_user.username}}</h2>
             <p class="text-secondary">{{current_user.email}}</p>
             <p class="text-secondary">Saldo €: {{current_user.saldoEuro}}</p>
+            <p class="text-secondary">Saldo $: {{current_user.saldoDollar}}</p>
+            <p class="text-secondary">Saldo £: {{current_user.saldoLibra}}</p>
+            <p class="text-secondary">Saldo C: {{current_user.saldoCardan}}</p>
         </div>
         </div>
         <!-- FORM HERE -->
@@ -53,6 +56,45 @@
                             </div>
                         {% else %}
                             {{ form.DepositoEuro(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{form.DepositoDollar.label(class="form-control-label")}}
+                        {% if form.DepositoDollar.errors %}
+                            {{ form.DepositoDollar(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.DepositoDollar.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.DepositoDollar(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{form.DepositoLibra.label(class="form-control-label")}}
+                        {% if form.DepositoLibra.errors %}
+                            {{ form.DepositoLibra(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.DepositoLibra.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.DepositoLibra(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{form.DepositoCardan.label(class="form-control-label")}}
+                        {% if form.DepositoCardan.errors %}
+                            {{ form.DepositoCardan(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.DepositoCardan.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.DepositoCardan(class="form-control form-control-lg") }}
                         {% endif %}
                     </div>
                     <div class="form-group">

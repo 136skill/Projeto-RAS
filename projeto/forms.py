@@ -24,12 +24,15 @@ class UpdateConta(FlaskForm):
     email = StringField('Email', validators = [DataRequired(), Email()])
     foto = FileField('Atualizar Foto', validators=[FileAllowed(['jpg','png'])])
     DepositoEuro = IntegerField('Depósito (Euro)', validators = [NumberRange(min=0)])
+    DepositoDollar = IntegerField('Depósito (Dollar)', validators = [NumberRange(min=0)])
+    DepositoLibra = IntegerField('Depósito (Libra)', validators = [NumberRange(min=0)])
+    DepositoCardan = IntegerField('Depósito (Cardan)', validators = [NumberRange(min=0)])
 
     submit = SubmitField('Atualizar Dados')
 
 class nova_Aposta(FlaskForm):
     desporto = SelectField('Desporto', choices=[('Tenis','Tenis'),('Futebol','Futebol')], validators=[DataRequired()])
-    moeda = SelectField('Moeda',choices=[('€','Euro')],validators=[DataRequired()])
+    moeda = SelectField('Moeda',choices=[('€','Euro'),('£','Libra'),('$','Dollar'),('C','Cardan')],validators=[DataRequired()])
     valor = IntegerField('Valor', validators=[DataRequired(), NumberRange(min=0)])
     evento = SelectField('Evento', choices=[], validators = [DataRequired()])
 
