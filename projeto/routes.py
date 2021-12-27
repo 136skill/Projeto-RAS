@@ -9,12 +9,26 @@ from projeto.models import User, Aposta, Evento
 from flask_login import login_user, current_user, logout_user, login_required
 import json
 
-data = json.load(open("C:/Users/beatr/Desktop/RASproj/Api.json"))
+data = json.load(open("C:/Users/beatr/Desktop/RASCodigo/Api.json"))
+
+def loadEventos():
+    for evento in data['Eventos']:
+        ev = Evento.query.filter_by(id=evento['id']).first()
+
+        if ev:
+            flash('Eventos desportivos up to date!', 'success')
+        else:
+            novo = Evento(id=evento['id'], desporto=evento['Desporto'], equipa=evento['Atleta'], liga=evento['Liga'], odd=evento['Odd'], dia=evento['Dia'], mes=evento['Mes'],ano=evento['Ano'],hora=evento['Hora'],minuto=evento['Minuto'],potencial=evento['Potencial'])
+            db.session.add(novo)
+            db.session.commit()
+            flash('Novos eventos desportivos disponíveis!', 'success')
+
 
 @app.route("/")
 @app.route("/home")
 def home():
     #usa template
+    loadEventos()
     return render_template('home.html', data=data)
 
 @app.route("/about")
@@ -261,43 +275,48 @@ def atualizaApostas():
                     if p.dia < currentDay:
                         flash('Houve atualização de apostas','success')
                         p.estado = 'Fechado'
+                        atualizaSaldo(p)
                     if p.dia == currentDay:
                         if p.hora < currentHour:
                             flash('Houve atualização de apostas, Jogo de {p.equipa} terminou!','success')
                             p.estado = 'Fechado'
+                            atualizaSaldo(p)
                         if p.hora == currentHour:
-                            if currentMinute >= p.minuto:
+                            if currentMinute > p.minuto:
                                 flash('Houve atualização de apostas','success')
                                 p.estado = 'Fechado'
-                    if(p.potencial=='G'):
-                        if (p.moeda == '€'):
-                            usernow = User.query.filter_by(username=current_user.username).first()
-                            current_user.saldoEuro += (p.valor * p.odd)
-                        if (p.moeda == '$'):
-                            usernow = User.query.filter_by(username=current_user.username).first()
-                            current_user.saldoDollar += (p.valor * p.odd)
-                        if (p.moeda == '£'):
-                            usernow = User.query.filter_by(username=current_user.username).first()
-                            current_user.saldoLibra += (p.valor * p.odd)
-                        if (p.moeda == 'C'):
-                            usernow = User.query.filter_by(username=current_user.username).first()
-                            current_user.saldoCardan += (p.valor * p.odd)
-                    else:
-                        if(p.moeda == '€'):
-                            usernow = User.query.filter_by(username=current_user.username).first()
-                            current_user.saldoEuro -= (p.valor * p.odd)
-                        if(p.moeda == '$'):
-                            usernow = User.query.filter_by(username=current_user.username).first()
-                            current_user.saldoDollar -= (p.valor * p.odd)
-                        if(p.moeda == '£'):
-                            usernow = User.query.filter_by(username=current_user.username).first()
-                            current_user.saldoLibra -= (p.valor * p.odd)
-                        if(p.moeda == 'C'):
-                            usernow = User.query.filter_by(username=current_user.username).first()
-                            current_user.saldoCardan -= (p.valor * p.odd)
+                                atualizaSaldo(p)
+    db.session.commit()
+                    
+def atualizaSaldo(p):         
+    if(p.potencial=='G'):
+        if (p.moeda == '€'):
+            usernow = User.query.filter_by(username=current_user.username).first()
+            current_user.saldoEuro += (p.valor * p.odd)
+        if (p.moeda == '$'):
+            usernow = User.query.filter_by(username=current_user.username).first()
+            current_user.saldoDollar += (p.valor * p.odd)
+        if (p.moeda == '£'):
+            usernow = User.query.filter_by(username=current_user.username).first()
+            current_user.saldoLibra += (p.valor * p.odd)
+        if (p.moeda == 'C'):
+            usernow = User.query.filter_by(username=current_user.username).first()
+            current_user.saldoCardan += (p.valor * p.odd)
+    else:
+        if(p.moeda == '€'):
+            usernow = User.query.filter_by(username=current_user.username).first()
+            current_user.saldoEuro -= (p.valor * p.odd)
+        if(p.moeda == '$'):
+            usernow = User.query.filter_by(username=current_user.username).first()
+            current_user.saldoDollar -= (p.valor * p.odd)
+        if(p.moeda == '£'):
+            usernow = User.query.filter_by(username=current_user.username).first()
+            current_user.saldoLibra -= (p.valor * p.odd)
+        if(p.moeda == 'C'):
+            usernow = User.query.filter_by(username=current_user.username).first()
+            current_user.saldoCardan -= (p.valor * p.odd)   
 
-
-        db.session.commit()
+    db.session.commit()
 
 
 @app.route("/mybets", methods=['GET', 'POST'])

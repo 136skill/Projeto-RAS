@@ -1,27 +1,57 @@
 { 
     "Eventos":[
                 {
-                  "id" : "0",
+                  "id" : "1",
                   "Desporto" : "Tenis",
+                  "Atleta": "Naomi Osaka" ,
                   "Liga": "US Open",
-                  "Equipa1": "Naomi Osaka" ,
-                  "Equipa2": "Serena Williams",
-                  "Odd1": "3,70",
-                  "Odd2": "1,19",
-                  "Data": "19-12-2021",
-                  "Hora" : "14:00:00"
+                  "Odd": 3.70,
+                  "Dia": 19,
+                  "Mes":12,
+                  "Ano":2022,
+                  "Hora" : 14,
+                  "Minuto": 30 ,
+                  "Potencial" : "G"
                 },
                 {
-                    "id" : "0",
-                    "Desporto" : "Futebol",
-                    "Liga" : "Primeira Liga Portuguesa",
-                    "Equipa1": "SL Benfica" ,
-                    "Equipa2": "Gil Vicente",
-                    "Odd1": "1,13",
-                    "Odd2": "18,00",
-                    "Empate" : "8,25",
-                    "Data": "19-12-2021",
-                    "Hora" : "17:00:00"   
-                  }
-                ]
+                  "id" : "2",
+                  "Desporto" : "Futebol",
+                  "Atleta": "Benfica" ,
+                  "Liga": "Champions",
+                  "Odd": 2,
+                  "Dia": 27,
+                  "Mes":12,
+                  "Ano":2022,
+                  "Hora" : 3,
+                  "Minuto": 56 ,
+                  "Potencial" : "G"
+              },
+              {
+                "id" : "3",
+                "Desporto" : "Futebol",
+                "Atleta": "Gil Vicente" ,
+                "Liga": "Liga Nos",
+                "Odd": 2,
+                "Dia": 27,
+                "Mes":12,
+                "Ano":2021,
+                "Hora" : 4,
+                "Minuto": 1,
+                "Potencial" : "G"
+            },
+            {
+              "id" : "4",
+              "Desporto" : "Tenis",
+              "Atleta": "Serena Williams" ,
+              "Liga": "Liga Nos",
+              "Odd": 2,
+              "Dia": 27,
+              "Mes":12,
+              "Ano":2021,
+              "Hora" : 4,
+              "Minuto": 12,
+              "Potencial" : "G"
+          }
+
+          ]
 }
