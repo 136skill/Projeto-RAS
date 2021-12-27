@@ -38,3 +38,9 @@ class nova_Aposta(FlaskForm):
 
     submit = SubmitField('Fazer Aposta')
 
+class cash_out(FlaskForm):
+    moeda = SelectField('Moeda',choices=[('€','Euro'),('£','Libra'),('$','Dollar'),('C','Cardan')],validators=[DataRequired()])
+    valor = IntegerField('Valor', validators=[DataRequired(), NumberRange(min=0)])
+
+    submit = SubmitField('Cash Out')
+

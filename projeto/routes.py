@@ -4,7 +4,7 @@ from datetime import datetime
 from PIL import Image #dá resize nos icons para nao ocupar muito espaço
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from projeto import app, db, bcrypt
-from projeto.forms import Registo, Login, UpdateConta, nova_Aposta
+from projeto.forms import Registo, Login, UpdateConta, nova_Aposta, cash_out
 from projeto.models import User, Aposta, Evento
 from flask_login import login_user, current_user, logout_user, login_required
 import json
@@ -34,7 +34,7 @@ def registo():
     username = req.get('username')
     email = req.get('email')
 
-    if 0 < int(-1 if idade is None else idade)  < 17:
+    if 0 < int(-1 if idade is None else idade)  < 18:
         flash('Não é maior de idade!', 'danger')
         return render_template('registo.html', title='Registo',form=form)
 
@@ -313,7 +313,57 @@ def myapostas():
     
     return render_template('apostas.html', apostas=apostas,user=user)
 
+@app.route("/cashout", methods=['GET', 'POST'])
+@login_required 
+def cashout():
+    form = cash_out() 
+    req = request.form
+    moeda = req.get('moeda')
+    valor = req.get('valor')
+
+    atualizaApostas()
+
+    if form.validate_on_submit():
+        if form.moeda.data == '€':
+            if current_user.saldoEuro < int(0 if valor is None else valor):
+                flash('Não tem saldo suficiente!','danger')
+                return render_template('cashout.html', title='Cash Out', form=form)
+            else:
+                usernow = User.query.filter_by(username=current_user.username).first()
+                flash('Transferência bem sucedida','success')
+                current_user.saldoEuro = usernow.saldoEuro - int(valor)
+
+
+        if form.moeda.data == '$':
+            if current_user.saldoDollar < int(0 if valor is None else valor):
+                flash('Não tem saldo suficiente!','danger')
+                return render_template('cashout.html', title='Cash Out', form=form)
+            else:
+                usernow = User.query.filter_by(username=current_user.username).first()
+                flash('Transferência bem sucedida','success')
+                current_user.saldoDollar -= int(valor)
+
+        if form.moeda.data == '£':
+            if current_user.saldoLibra < int(0 if valor is None else valor):
+                flash('Não tem saldo suficiente!','danger')
+                return render_template('cashout.html', title='Cash Out', form=form)
+            else:
+                usernow = User.query.filter_by(username=current_user.username).first()
+                flash('Transferência bem sucedida','success')
+                current_user.saldoLibra -= int(valor)
+
+        if form.moeda.data == 'C':
+            if current_user.saldoCardan < int(0 if valor is None else valor):
+                flash('Não tem saldo suficiente!','danger')
+                return render_template('cashout.html', title='Cash Out', form=form)
+            else:
+                usernow = User.query.filter_by(username=current_user.username).first()
+                flash('Transferência bem sucedida','success')
+                current_user.saldoCardan -= int(valor)
     
+    db.session.commit()
+
+    return render_template('cashout.html', form=form)
 
 
 
