@@ -9,7 +9,8 @@ class Registo(FlaskForm):
     email = StringField('Email', validators = [DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirmar_password = PasswordField('Confirmar Password', validators=[DataRequired(), EqualTo('password')])
-    idade = StringField('idade', validators=[DataRequired()])
+    idade = StringField('Idade', validators=[DataRequired()])
+    #estado = SelectField('Tipo de Conta', choices= [('1','Normal'),('2','Premium')], validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
 
@@ -43,4 +44,11 @@ class cash_out(FlaskForm):
     valor = IntegerField('Valor', validators=[DataRequired(), NumberRange(min=0)])
 
     submit = SubmitField('Cash Out')
+
+class cambio_moedas(FlaskForm):
+    moeda = SelectField('Moeda',choices=[('€','Euro')],validators=[DataRequired()])
+    moeda2 = SelectField('Moeda2', choices=[('C','Cardan')],validators=[DataRequired()])
+    valor = IntegerField('Valor', validators=[DataRequired(), NumberRange(min=0)])
+
+    submit = SubmitField('Cambiar')
 

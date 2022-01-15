@@ -33,8 +33,9 @@
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if current_user.is_authenticated %}
-              <a class="nav-item nav-link" href="{{url_for('cashout') }}">Cash Out</a>
-              <a class="nav-item nav-link" href="{{url_for('myapostas') }}">As minhas Apostas</a>
+                <a class="nav-item nav-link" href="{{url_for('cambio') }}">Cambio</a>
+                <a class="nav-item nav-link" href="{{url_for('cashout') }}">Cash Out</a>
+                <a class="nav-item nav-link" href="{{url_for('myapostas') }}">As minhas Apostas</a>
                 <a class="nav-item nav-link" href="{{url_for('novaAposta') }}">Nova Aposta</a>
                 <a class="nav-item nav-link" href="{{url_for('conta') }}">A minha conta</a>
                 <a class="nav-item nav-link" href="{{url_for('logout') }}">Logout</a>

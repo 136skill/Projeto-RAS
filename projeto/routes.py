@@ -4,24 +4,50 @@ from datetime import datetime
 from PIL import Image #dá resize nos icons para nao ocupar muito espaço
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from projeto import app, db, bcrypt
-from projeto.forms import Registo, Login, UpdateConta, nova_Aposta, cash_out
-from projeto.models import User, Aposta, Evento
+from projeto.forms import Registo, Login, UpdateConta, nova_Aposta, cash_out, cambio_moedas
+from projeto.models import User, Aposta, Evento, Taxa
 from flask_login import login_user, current_user, logout_user, login_required
 import json
 
+
 data = json.load(open("C:/Users/beatr/Desktop/RASCodigo/Api.json"))
+camb = json.load(open("C:/Users/beatr/Desktop/RASCodigo/Cambio.json"))
 
 def loadEventos():
     for evento in data['Eventos']:
         ev = Evento.query.filter_by(id=evento['id']).first()
-
-        if ev:
+        t = True
+        x = True
+        if ev and t:
+            t = False
             flash('Eventos desportivos up to date!', 'success')
-        else:
+        if not ev:
             novo = Evento(id=evento['id'], desporto=evento['Desporto'], equipa=evento['Atleta'], liga=evento['Liga'], odd=evento['Odd'], dia=evento['Dia'], mes=evento['Mes'],ano=evento['Ano'],hora=evento['Hora'],minuto=evento['Minuto'],potencial=evento['Potencial'])
             db.session.add(novo)
             db.session.commit()
-            flash('Novos eventos desportivos disponíveis!', 'success')
+            if x:
+                x = False
+                flash('Novos eventos desportivos disponíveis!', 'success')
+
+
+def loadTaxa():
+    for taxas in camb['Taxas']:
+        cb = Taxa.query.filter_by(id=taxas['id']).first()
+
+        if not cb:
+            taxa = Taxa(id=taxas['id'], moeda = taxas['Moeda'], moeda2 = taxas['Moeda2'], taxas = int(taxas['taxa']))
+            db.session.add(taxa)
+            flash('Taxas diárias de câmbio atualizadas','success')
+
+        if cb and cb.taxas != taxas['taxa']:
+            cb.taxas = int(taxas['taxa'])
+
+        if cb and cb.taxas == taxas['taxa']:
+            flash('Taxas diárias prontas','success')
+
+        db.session.commit()
+
+
 
 
 @app.route("/")
@@ -29,6 +55,7 @@ def loadEventos():
 def home():
     #usa template
     loadEventos()
+    loadTaxa()
     return render_template('home.html', data=data)
 
 @app.route("/about")
@@ -47,12 +74,14 @@ def registo():
     idade = req.get('idade')
     username = req.get('username')
     email = req.get('email')
+    
 
     if 0 < int(-1 if idade is None else idade)  < 18:
         flash('Não é maior de idade!', 'danger')
         return render_template('registo.html', title='Registo',form=form)
 
     if form.validate_on_submit():
+        
         user = User.query.filter_by(username=username).first()
         email1 =  User.query.filter_by(username=email).first()
 
@@ -63,12 +92,22 @@ def registo():
             flash('Já existe uma conta registada com este email', 'danger')
             return render_template('registo.html', title='Registo',form=form)
         else:
+            #if form.data.estado == '1':
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
             user = User(username=form.username.data, email=form.email.data, password=hashed_password, saldoEuro=0, saldoLibra=0, saldoDollar=0, saldoCardan=0)
             db.session.add(user)
             db.session.commit()
             flash(f'Account created for {form.username.data}!', 'success')
             return redirect(url_for('login'))
+            #else:
+            #   hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            #   user = User(estado = 2, username=form.username.data, email=form.email.data, password=hashed_password, saldoEuro=0, saldoLibra=0, saldoDollar=0, saldoCardan=0)
+            #   db.session.add(user)
+            #   db.session.commit()
+            #   flash(f'Account created for {form.username.data}!', 'success')
+            #   return redirect(url_for('login'))
+     
+
     return render_template('registo.html', title='Registo',form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -383,6 +422,57 @@ def cashout():
     db.session.commit()
 
     return render_template('cashout.html', form=form)
+
+@app.route("/cambio", methods=['GET', 'POST'])
+@login_required 
+def cambio():
+    atualizaApostas()
+
+    form = cambio_moedas()
+    req = request.form
+    valor = req.get('valor')
+
+    if form.validate_on_submit():
+        if form.moeda.data == '€' and form.moeda2.data == 'C':
+            if current_user.saldoEuro < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=1).first()
+                current_user.saldoEuro -= int(valor)
+                current_user.saldoCardan += int(valor)*int(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+    
+
+    db.session.commit()
+    return render_template('cambio.html', form=form)
+
+
+        # if form.moeda.data == '€' and form.moeda2.data = '£':
+        
+        # if form.moeda.data == '€' and form.moeda2.data = '$':
+
+        # if form.moeda.data == 'C' and form.moeda2.data = '$':
+
+        # if form.moeda.data == 'C' and form.moeda2.data = '£':
+
+        # if form.moeda.data == 'C' and form.moeda2.data = '€':
+
+        # if form.moeda.data == '£' and form.moeda2.data = '€':
+        
+        # if form.moeda.data == '£' and form.moeda2.data = 'C':
+        
+        # if form.moeda.data == '£' and form.moeda2.data = '$':
+
+        # if form.moeda.data == '$' and form.moeda2.data = 'C':
+
+        # if form.moeda.data == '$' and form.moeda2.data = '£':
+
+        # if form.moeda.data == '$' and form.moeda2.data = '€':
+
+        
+
+
+
 
 
 

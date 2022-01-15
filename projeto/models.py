@@ -8,6 +8,7 @@ def load_user(user_id):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    #estado = db.Column(db.Integer, unique=False, nullable=False)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
@@ -58,4 +59,13 @@ class Evento(db.Model):
 
     def __repr__(self):
         return f"Evento('{self.desporto}', '{self.equipa}', '{self.odd}', '{self.liga}')"
+
+class Taxa(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    moeda = db.Column(db.String(20),nullable=False)
+    moeda2 = db.Column(db.String(20),nullable=False)
+    taxas = db.Column(db.Integer,nullable=False)
+
+    def __repr__(self):
+        return f"Taxas('{self.moeda}', '{self.moeda2}', '{self.taxas}')"
 
