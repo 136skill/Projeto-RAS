@@ -49,6 +49,7 @@ class Evento(db.Model):
     desporto = db.Column(db.String(20),nullable=False)
     equipa = db.Column(db.String(20),nullable=False)
     liga = db.Column(db.String(20),nullable=False)
+    jornada = db.Column(db.String(20),nullable=False)
     odd = db.Column(db.Integer, nullable=False)
     dia = db.Column(db.Integer, nullable=False)
     mes = db.Column(db.Integer, nullable=False)

@@ -3,6 +3,7 @@
                 {
                   "id" : "1",
                   "Desporto" : "Tenis",
+                  "Jornada" : "Meias Finais",
                   "Atleta": "Naomi Osaka" ,
                   "Liga": "US Open",
                   "Odd": 3.70,
@@ -16,6 +17,7 @@
                 {
                   "id" : "2",
                   "Desporto" : "Futebol",
+                  "Jornada" : "Final",
                   "Atleta": "Benfica" ,
                   "Liga": "Champions",
                   "Odd": 2,
@@ -30,6 +32,7 @@
                 "id" : "3",
                 "Desporto" : "Futebol",
                 "Atleta": "Gil Vicente" ,
+                "Jornada" : "Final",
                 "Liga": "Liga Nos",
                 "Odd": 2,
                 "Dia": 27,
@@ -43,6 +46,7 @@
               "id" : "4",
               "Desporto" : "Tenis",
               "Atleta": "Serena Williams" ,
+              "Jornada" : "Meia Final",
               "Liga": "Liga Nos",
               "Odd": 2,
               "Dia": 27,
@@ -51,7 +55,35 @@
               "Hora" : 4,
               "Minuto": 12,
               "Potencial" : "G"
-          }
+          },
+          {
+            "id" : "5",
+            "Desporto" : "Futebol",
+            "Atleta": "FC Porto" ,
+            "Jornada" : "Oitavos",
+            "Liga": "Champions",
+            "Odd": 2,
+            "Dia": 27,
+            "Mes":12,
+            "Ano":2022,
+            "Hora" : 3,
+            "Minuto": 56 ,
+            "Potencial" : "G"
+        },
+        {
+          "id" : "6",
+          "Desporto" : "Futebol",
+          "Jornada" : "Final",
+          "Atleta": "Empate Benfica Gil Vicente" ,
+          "Liga": "Champions",
+          "Odd": 2,
+          "Dia": 27,
+          "Mes":12,
+          "Ano":2022,
+          "Hora" : 3,
+          "Minuto": 56 ,
+          "Potencial" : "P"
+      }
 
           ]
 }

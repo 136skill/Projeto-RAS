@@ -13,8 +13,8 @@ class nova_Aposta(FlaskForm):
     submit = SubmitField('Fazer Aposta')
 
 class cambio_moedas(FlaskForm):
-    moeda = SelectField('Moeda',choices=[('€','Euro')],validators=[DataRequired()])
-    moeda2 = SelectField('Moeda2', choices=[('C','Cardan')],validators=[DataRequired()])
+    moeda = SelectField('Moeda',choices=[('€','Euro'),('£','Libra'),('$','Dollar'),('C','Cardan')],validators=[DataRequired()])
+    moeda2 = SelectField('Moeda2', choices=[('€','Euro'),('£','Libra'),('$','Dollar'),('C','Cardan')],validators=[DataRequired()])
     valor = IntegerField('Valor', validators=[DataRequired(), NumberRange(min=0)])
 
     submit = SubmitField('Cambiar')

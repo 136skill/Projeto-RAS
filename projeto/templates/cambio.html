@@ -2,10 +2,25 @@
 {% block content%}
 <div class="content-section">
     <form method="POST" action="">
-        {{form.hidden_tag()}}
-        {{form.moeda}}
-        {{form.moeda2}}
-        {{form.valor}}
-        <input type="submit">
+        <div class="content-section">
+            <form method="POST" action="">
+                {{form.hidden_tag()}}
+                <fieldset class="form-group">
+                    <legend class=border-bottom mb-4">Câmbio</legend>
+                    <div class="form-group">
+                        {{form.moeda.label(class="form-control-label")}}
+                        {{form.moeda(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-group">
+                        {{form.moeda2.label(class="form-control-label")}}
+                        {{form.moeda2(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-group">
+                        {{form.valor.label(class="form-control-label")}}
+                        {{form.valor(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
     </form>
 {% endblock %}

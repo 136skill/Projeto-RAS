@@ -71,6 +71,7 @@ def evento(desporto):
     for evento in eventos:
         eventoObj={}
         eventoObj['id'] = evento.id
+        eventoObj['jornada'] = evento.jornada
         eventoObj['liga'] = evento.liga
         eventoObj['equipa'] = evento.equipa
         eventoObj['odd'] = evento.odd
@@ -121,19 +122,19 @@ def atualizaSaldo(p):
         if (p.moeda == 'C'):
             usernow = User.query.filter_by(username=current_user.username).first()
             current_user.saldoCardan += (p.valor * p.odd)
-    else:
-        if(p.moeda == '€'):
-            usernow = User.query.filter_by(username=current_user.username).first()
-            current_user.saldoEuro -= (p.valor * p.odd)
-        if(p.moeda == '$'):
-            usernow = User.query.filter_by(username=current_user.username).first()
-            current_user.saldoDollar -= (p.valor * p.odd)
-        if(p.moeda == '£'):
-            usernow = User.query.filter_by(username=current_user.username).first()
-            current_user.saldoLibra -= (p.valor * p.odd)
-        if(p.moeda == 'C'):
-            usernow = User.query.filter_by(username=current_user.username).first()
-            current_user.saldoCardan -= (p.valor * p.odd)   
+    #else:
+    #    if(p.moeda == '€'):
+    #        usernow = User.query.filter_by(username=current_user.username).first()
+    #        current_user.saldoEuro -= (p.valor * p.odd)
+    #    if(p.moeda == '$'):
+    #        usernow = User.query.filter_by(username=current_user.username).first()
+    #        current_user.saldoDollar -= (p.valor * p.odd)
+    #    if(p.moeda == '£'):
+    #        usernow = User.query.filter_by(username=current_user.username).first()
+    #        current_user.saldoLibra -= (p.valor * p.odd)
+    #    if(p.moeda == 'C'):
+    #        usernow = User.query.filter_by(username=current_user.username).first()
+    #        current_user.saldoCardan -= (p.valor * p.odd)   
 
     db.session.commit()
 
@@ -148,38 +149,122 @@ def cambio():
     valor = req.get('valor')
 
     if form.validate_on_submit():
+        if form.moeda.data == '€' and form.moeda2.data == '€':
+            flash('Não é possível fazer o câmbio entre moedas iguais','danger')
+        if form.moeda.data == 'C' and form.moeda2.data == 'C':
+            flash('Não é possível fazer o câmbio entre moedas iguais','danger')
+        if form.moeda.data == '£' and form.moeda2.data == '£':
+            flash('Não é possível fazer o câmbio entre moedas iguais','danger')
+        if form.moeda.data == '$' and form.moeda2.data == '$':
+            flash('Não é possível fazer o câmbio entre moedas iguais','danger')
+
+
         if form.moeda.data == '€' and form.moeda2.data == 'C':
             if current_user.saldoEuro < form.valor.data:
                 flash('Não tem saldo suficiente','danger')
             else: 
                 tax = Taxa.query.filter_by(id=1).first()
                 current_user.saldoEuro -= int(valor)
-                current_user.saldoCardan += int(valor)*int(tax.taxas)
+                current_user.saldoCardan += int(valor)*float(tax.taxas)
                 flash('Câmbio realizado com sucesso','success')
-    
+
+        if form.moeda.data == '€' and form.moeda2.data == '£':
+            if current_user.saldoEuro < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=3).first()
+                current_user.saldoEuro -= int(valor)
+                current_user.saldoLibra += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+        if form.moeda.data == '€' and form.moeda2.data == '$':
+            if current_user.saldoEuro < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=2).first()
+                current_user.saldoEuro -= int(valor)
+                current_user.saldoDollar += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+        if form.moeda.data == 'C' and form.moeda2.data == '$':
+            if current_user.saldoCardan < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=4).first()
+                current_user.saldoCardan -= int(valor)
+                current_user.saldoDollar += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+
+        if form.moeda.data == 'C' and form.moeda2.data == '£':
+            if current_user.saldoCardan < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=5).first()
+                current_user.saldoCardan -= int(valor)
+                current_user.saldoLibra += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+
+        if form.moeda.data == 'C' and form.moeda2.data == '€':
+            if current_user.saldoCardan < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=6).first()
+                current_user.saldoCardan -= int(valor)
+                current_user.saldoEuro += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+        
+        if form.moeda.data == '£' and form.moeda2.data == '€':
+            if current_user.saldoLibra < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=7).first()
+                current_user.saldoLibra -= int(valor)
+                current_user.saldoDollar += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+
+        if form.moeda.data == '£' and form.moeda2.data == 'C':
+            if current_user.saldoLibra < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=8).first()
+                current_user.saldoLibra -= int(valor)
+                current_user.saldoCardan += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+
+        if form.moeda.data == '£' and form.moeda2.data == '$':
+            if current_user.saldoLibra < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=9).first()
+                current_user.saldoLibra -= int(valor)
+                current_user.saldoDollar += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+        
+        if form.moeda.data == '$' and form.moeda2.data == 'C':
+            if current_user.saldoDollar < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=10).first()
+                current_user.saldoDollar -= int(valor)
+                current_user.saldoCardan += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+
+        if form.moeda.data == '$' and form.moeda2.data == '€':
+            if current_user.saldoDollar < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=11).first()
+                current_user.saldoDollar -= int(valor)
+                current_user.saldoEuro += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
+
+        if form.moeda.data == '$' and form.moeda2.data == '£':
+            if current_user.saldoDollar < form.valor.data:
+                flash('Não tem saldo suficiente','danger')
+            else: 
+                tax = Taxa.query.filter_by(id=12).first()
+                current_user.saldoDollar -= int(valor)
+                current_user.saldoLibra += int(valor)*float(tax.taxas)
+                flash('Câmbio realizado com sucesso','success')
 
     db.session.commit()
     return render_template('cambio.html', form=form)
 
-
-        # if form.moeda.data == '€' and form.moeda2.data = '£':
-        
-        # if form.moeda.data == '€' and form.moeda2.data = '$':
-
-        # if form.moeda.data == 'C' and form.moeda2.data = '$':
-
-        # if form.moeda.data == 'C' and form.moeda2.data = '£':
-
-        # if form.moeda.data == 'C' and form.moeda2.data = '€':
-
-        # if form.moeda.data == '£' and form.moeda2.data = '€':
-        
-        # if form.moeda.data == '£' and form.moeda2.data = 'C':
-        
-        # if form.moeda.data == '£' and form.moeda2.data = '$':
-
-        # if form.moeda.data == '$' and form.moeda2.data = 'C':
-
-        # if form.moeda.data == '$' and form.moeda2.data = '£':
-
-        # if form.moeda.data == '$' and form.moeda2.data = '€':
