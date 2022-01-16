@@ -31,24 +31,8 @@ class UpdateConta(FlaskForm):
 
     submit = SubmitField('Atualizar Dados')
 
-class nova_Aposta(FlaskForm):
-    desporto = SelectField('Desporto', choices=[('Tenis','Tenis'),('Futebol','Futebol')], validators=[DataRequired()])
-    moeda = SelectField('Moeda',choices=[('€','Euro'),('£','Libra'),('$','Dollar'),('C','Cardan')],validators=[DataRequired()])
-    valor = IntegerField('Valor', validators=[DataRequired(), NumberRange(min=0)])
-    evento = SelectField('Evento', choices=[], validators = [DataRequired()])
-
-    submit = SubmitField('Fazer Aposta')
-
 class cash_out(FlaskForm):
     moeda = SelectField('Moeda',choices=[('€','Euro'),('£','Libra'),('$','Dollar'),('C','Cardan')],validators=[DataRequired()])
     valor = IntegerField('Valor', validators=[DataRequired(), NumberRange(min=0)])
 
     submit = SubmitField('Cash Out')
-
-class cambio_moedas(FlaskForm):
-    moeda = SelectField('Moeda',choices=[('€','Euro')],validators=[DataRequired()])
-    moeda2 = SelectField('Moeda2', choices=[('C','Cardan')],validators=[DataRequired()])
-    valor = IntegerField('Valor', validators=[DataRequired(), NumberRange(min=0)])
-
-    submit = SubmitField('Cambiar')
-

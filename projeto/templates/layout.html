@@ -27,21 +27,21 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{{url_for('home') }}">Home</a>
-              <a class="nav-item nav-link" href="{{url_for('about') }}">About</a>
+              <a class="nav-item nav-link" href="{{url_for('main.home') }}">Home</a>
+              <a class="nav-item nav-link" href="{{url_for('main.about') }}">About</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if current_user.is_authenticated %}
-                <a class="nav-item nav-link" href="{{url_for('cambio') }}">Cambio</a>
-                <a class="nav-item nav-link" href="{{url_for('cashout') }}">Cash Out</a>
-                <a class="nav-item nav-link" href="{{url_for('myapostas') }}">As minhas Apostas</a>
-                <a class="nav-item nav-link" href="{{url_for('novaAposta') }}">Nova Aposta</a>
-                <a class="nav-item nav-link" href="{{url_for('conta') }}">A minha conta</a>
-                <a class="nav-item nav-link" href="{{url_for('logout') }}">Logout</a>
+                <a class="nav-item nav-link" href="{{url_for('apostas.cambio') }}">Cambio</a>
+                <a class="nav-item nav-link" href="{{url_for('users.cashout') }}">Cash Out</a>
+                <a class="nav-item nav-link" href="{{url_for('users.myapostas') }}">As minhas Apostas</a>
+                <a class="nav-item nav-link" href="{{url_for('apostas.novaAposta') }}">Nova Aposta</a>
+                <a class="nav-item nav-link" href="{{url_for('users.conta') }}">A minha conta</a>
+                <a class="nav-item nav-link" href="{{url_for('users.logout') }}">Logout</a>
               {% else %}
-                <a class="nav-item nav-link" href="{{url_for('login') }}">Login</a>
-                <a class="nav-item nav-link" href="{{url_for('registo') }}">Registo</a>
+                <a class="nav-item nav-link" href="{{url_for('users.login') }}">Login</a>
+                <a class="nav-item nav-link" href="{{url_for('users.registo') }}">Registo</a>
               {% endif %}
             </div>
           </div>
