@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo, NumberRange, Email, ValidationError
 from projeto.models import User 
 
@@ -10,7 +10,7 @@ class Registo(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     confirmar_password = PasswordField('Confirmar Password', validators=[DataRequired(), EqualTo('password')])
     idade = StringField('Idade', validators=[DataRequired()])
-    #estado = SelectField('Tipo de Conta', choices= [('1','Normal'),('2','Premium')], validators=[DataRequired()])
+    estado = SelectField('Tipo de Conta', choices= [('1','Normal'),('2','Premium')], validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
 
@@ -36,3 +36,7 @@ class cash_out(FlaskForm):
     valor = IntegerField('Valor', validators=[DataRequired(), NumberRange(min=0)])
 
     submit = SubmitField('Cash Out')
+
+class Questionario(FlaskForm):
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Enviar')

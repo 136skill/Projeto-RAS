@@ -5,7 +5,7 @@ from datetime import datetime
 from PIL import Image #dá resize nos icons para nao ocupar muito espaço
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from projeto import app, db, bcrypt
-from projeto.users.forms import Registo, Login, UpdateConta, cash_out
+from projeto.users.forms import Registo, Login, UpdateConta, cash_out, Questionario
 from projeto.users.utils import guarda_foto
 from projeto.models import User, Aposta, Evento, Taxa
 from flask_login import login_user, current_user, logout_user, login_required
@@ -26,6 +26,7 @@ def registo():
     idade = req.get('idade')
     username = req.get('username')
     email = req.get('email')
+    estado = req.get('estado')
     
 
     if 0 < int(-1 if idade is None else idade)  < 18:
@@ -44,20 +45,20 @@ def registo():
             flash('Já existe uma conta registada com este email', 'danger')
             return render_template('registo.html', title='Registo',form=form)
         else:
-            #if form.data.estado == '1':
-            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-            user = User(username=form.username.data, email=form.email.data, password=hashed_password, saldoEuro=0, saldoLibra=0, saldoDollar=0, saldoCardan=0)
-            db.session.add(user)
-            db.session.commit()
-            flash(f'Account created for {form.username.data}!', 'success')
-            return redirect(url_for('users.login'))
-            #else:
-            #   hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-            #   user = User(estado = 2, username=form.username.data, email=form.email.data, password=hashed_password, saldoEuro=0, saldoLibra=0, saldoDollar=0, saldoCardan=0)
-            #   db.session.add(user)
-            #   db.session.commit()
-            #   flash(f'Account created for {form.username.data}!', 'success')
-            #   return redirect(url_for('login'))
+            if estado == '1':
+                hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+                user = User(username=form.username.data, email=form.email.data, password=hashed_password, saldoEuro=0, saldoLibra=0, saldoDollar=0, saldoCardan=0)
+                db.session.add(user)
+                db.session.commit()
+                flash(f'Account created for {form.username.data}!', 'success')
+                return redirect(url_for('users.login'))
+            if estado == '2':
+                hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+                user = User(estado = 2, username=form.username.data, email=form.email.data, password=hashed_password, saldoEuro=0, saldoLibra=0, saldoDollar=0, saldoCardan=0)
+                db.session.add(user)
+                db.session.commit()
+                flash(f'Account created for {form.username.data}!', 'success')
+                return redirect(url_for('users.login'))
      
 
     return render_template('registo.html', title='Registo',form=form)
@@ -235,3 +236,11 @@ def cashout():
     db.session.commit()
 
     return render_template('cashout.html', form=form)
+
+@users.route("/quest", methods=['GET', 'POST'])
+@login_required 
+def quest():
+    form = Questionario()
+    if form.validate_on_submit():
+        flash('Enviado!', 'success')
+    return render_template('quest.html', form=form)
